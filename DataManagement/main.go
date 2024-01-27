@@ -127,9 +127,39 @@ func FetchCompanyDetails(db *sql.DB, companyName CompanyName) ([] CompanyProduct
 
 }
 
+func insertIntoCompanies(db *sql.DB, companyName string, quantity, values int32) (int64, error) {
+	// creating a struct to store the data 
+	product := CompanyProduct{
+		Name: companyName, 
+		Quantity: quantity,
+		Count: values, 
+	}
+    
+	// insertion command using db.Exec 
+	result, err := db.Exec(
+		"INSERT INTO Companies (MBRD, VALUE, QUANTITY) VALUES (?, ?, ?)", 
+		&product.Name, &product.Count, &product.Quantity, 
+	)
+
+	if err != nil {
+		return 0, fmt.Errorf("An error occured : %v", err); 
+	}
+    
+	// returns int64 object 
+	id, err := result.LastInsertId(); 
+
+	if err != nil {
+		return 0, fmt.Errorf("An error occured while getting insert id: %v", err); 
+	}
+
+	return id, nil; 
 
 
-func main(){
+
+}
+
+
+func LoadProducts(){
 
 	var dbname string = "Transaction"; 
 	db := ConnectDB(dbname); 
@@ -154,3 +184,18 @@ func main(){
 	}
 
 } 
+
+func main(){
+	var dbname string = "Transaction"; 
+	db := ConnectDB(dbname); 
+
+	id, err := insertIntoCompanies(db, "FAR SQUARE", 34, 55); 
+
+	if err != nil {
+		log.Fatal(err); 
+	}
+
+	fmt.Printf("Inserted into table Companies at id: %v\n", id)
+
+
+}
