@@ -1,0 +1,4 @@
+USE Transaction; 
+
+SELECT QTY, STORECODE FROM Products LIMIT 20; 
+
